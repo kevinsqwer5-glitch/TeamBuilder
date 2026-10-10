@@ -69,13 +69,39 @@ h1 span {
 .label { display: block; font-weight: 800; margin: 0 0 8px; }
 .label small { font-weight: 400; color: var(--muted); }
 
-textarea, input[type="number"] {
+input[type="text"], input[type="number"] {
   width: 100%; color: var(--text); font: inherit; font-size: 1rem;
   background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border); border-radius: 14px;
   padding: 12px 14px; outline: none; transition: border-color .2s, box-shadow .2s;
 }
-textarea { resize: vertical; min-height: 140px; }
-textarea:focus, input:focus { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(255, 46, 147, 0.3); }
+input:focus { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(255, 46, 147, 0.3); }
+
+.add { display: flex; gap: 10px; }
+.add input { flex: 1; min-width: 0; }
+.add-btn {
+  flex: 0 0 56px; border: 0; border-radius: 14px; cursor: pointer;
+  font-size: 1.8rem; font-weight: 800; color: #fff; line-height: 1;
+  background: linear-gradient(135deg, var(--pink), var(--violet));
+  box-shadow: 0 6px 18px rgba(255, 46, 147, 0.4); transition: transform .1s;
+}
+.add-btn:active { transform: scale(0.92); }
+.add-btn:focus-visible, .chip button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+.players { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.players:empty::before { content: "Noch keine Mitspieler – leg los!"; color: var(--muted); font-size: 0.9rem; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; max-width: 100%;
+  padding: 6px 6px 6px 14px; border-radius: 999px; font-weight: 600;
+  background: rgba(255, 255, 255, 0.1); border: 1px solid var(--border);
+}
+.chip.fresh { animation: chipIn .25s ease-out; }
+.chip span { overflow-wrap: anywhere; }
+.chip button {
+  flex: 0 0 26px; height: 26px; border-radius: 50%; border: 0; cursor: pointer;
+  background: rgba(255, 255, 255, 0.12); color: var(--text); font-size: 1rem; line-height: 1;
+}
+.chip button:hover { background: var(--pink); }
+@keyframes chipIn { from { opacity: 0; transform: scale(0.7); } }
 
 .meta { display: flex; justify-content: space-between; align-items: center; margin: 8px 0 20px; color: var(--muted); font-size: 0.9rem; }
 .link { background: none; border: 0; color: var(--cyan); cursor: pointer; font: inherit; padding: 4px; }
@@ -162,6 +188,6 @@ textarea:focus, input:focus { border-color: var(--pink); box-shadow: 0 0 0 3px r
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .blob, .cta { animation: none; }
+  .blob, .cta, .chip { animation: none; }
   .team { animation: none; opacity: 1; transform: none; }
 }

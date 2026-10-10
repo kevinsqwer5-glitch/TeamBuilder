@@ -24,9 +24,13 @@
     </header>
 
     <section class="panel" id="setup">
-      <label for="names" class="label">Mitspieler <small>(einer pro Zeile oder mit Komma getrennt)</small></label>
-      <textarea id="names" rows="8" placeholder="Anna&#10;Ben&#10;Chris&#10;Dana&#10;..."></textarea>
-      <div class="meta"><span id="count">0 Mitspieler</span><button type="button" class="link" id="clear">Leeren</button></div>
+      <label for="player" class="label">Mitspieler</label>
+      <form class="add" id="addForm" autocomplete="off">
+        <input id="player" type="text" maxlength="40" placeholder="Name eingeben" enterkeyhint="done">
+        <button type="submit" class="add-btn" aria-label="Spieler hinzufügen">+</button>
+      </form>
+      <ul class="players" id="players" aria-live="polite"></ul>
+      <div class="meta"><span id="count">0 Mitspieler</span><button type="button" class="link" id="clear">Alle entfernen</button></div>
 
       <label for="size" class="label">Teilnehmer pro Team</label>
       <div class="stepper">

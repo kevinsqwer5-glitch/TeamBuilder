@@ -9,7 +9,8 @@ und eine eigene Neonfarbe.
 `index.html` im Browser öffnen – kein Build, kein Server nötig.
 Läuft auch auf dem Handy (z. B. über GitHub Pages).
 
-1. Mitspieler eintragen (einer pro Zeile oder mit Komma/Semikolon getrennt)
+1. Mitspieler einzeln eintragen und mit **+** (oder Enter) hinzufügen – mit × wieder entfernen
+   (Tipp: „Anna, Ben, Chris“ fügt alle drei auf einmal hinzu)
 2. Teilnehmer pro Team wählen
 3. **Teams bilden** – mit *Neu mischen* gibt's eine neue Verteilung, *Kopieren* legt die Teams in die Zwischenablage
 

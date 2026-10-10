@@ -28,12 +28,13 @@
   const STORAGE_KEY = "teambuilder.v1";
   const $ = (id) => document.getElementById(id);
   const els = {
-    names: $("names"), size: $("size"), minus: $("minus"), plus: $("plus"),
+    form: $("addForm"), player: $("player"), list: $("players"), size: $("size"), minus: $("minus"), plus: $("plus"),
     count: $("count"), hint: $("hint"), error: $("error"), build: $("build"),
     clear: $("clear"), setup: $("setup"), result: $("result"), teams: $("teams"),
     reshuffle: $("reshuffle"), copy: $("copy"), back: $("back"),
   };
 
+  let players = [];
   let lastTeams = [];
 
   // ---------- Hilfsfunktionen ----------
@@ -46,11 +47,38 @@
     return a;
   }
 
-  function parseNames() {
-    return els.names.value
-      .split(/[\n,;]+/)
-      .map((n) => n.trim())
-      .filter(Boolean);
+  // Eingegebene Namen hinzufügen; "Anna, Ben" fügt beide auf einmal hinzu.
+  function addPlayers(raw) {
+    const added = raw.split(/[\n,;]+/).map((n) => n.trim()).filter(Boolean);
+    if (!added.length) return;
+    const from = players.length;
+    players.push(...added);
+    renderPlayers(from);
+    els.list.lastElementChild?.scrollIntoView({ block: "nearest" });
+  }
+
+  function removePlayer(index) {
+    players.splice(index, 1);
+    renderPlayers();
+  }
+
+  // Nur Chips ab Index "animateFrom" bekommen die Einblend-Animation.
+  function renderPlayers(animateFrom = Infinity) {
+    els.list.replaceChildren(...players.map((name, i) => {
+      const li = document.createElement("li");
+      li.className = i >= animateFrom ? "chip fresh" : "chip";
+      const label = document.createElement("span");
+      label.textContent = name;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = "×";
+      btn.setAttribute("aria-label", `${name} entfernen`);
+      btn.addEventListener("click", () => removePlayer(i));
+      li.append(label, btn);
+      return li;
+    }));
+    updateInfo();
+    save();
   }
 
   function getSize() {
@@ -99,7 +127,6 @@
 
   // ---------- Darstellung ----------
   function updateInfo() {
-    const players = parseNames();
     const size = getSize();
     els.count.textContent = `${players.length} Mitspieler`;
     els.error.textContent = "";
@@ -154,7 +181,6 @@
   }
 
   function generate() {
-    const players = parseNames();
     if (players.length < 2) {
       els.error.textContent = "Mindestens 2 Mitspieler eintragen!";
       return;
@@ -218,7 +244,7 @@
   // ---------- Speicher (nur Komfort, darf fehlschlagen) ----------
   function save() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ names: els.names.value, size: els.size.value }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ players, size: els.size.value }));
     } catch (_) { /* ignorieren */ }
   }
 
@@ -226,7 +252,7 @@
     try {
       const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
       if (data) {
-        els.names.value = data.names || "";
+        if (Array.isArray(data.players)) players = data.players.filter((p) => typeof p === "string");
         els.size.value = data.size || 2;
       }
     } catch (_) { /* ignorieren */ }
@@ -239,18 +265,23 @@
     save();
   }
 
-  els.names.addEventListener("input", () => { updateInfo(); save(); });
+  els.form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    addPlayers(els.player.value);
+    els.player.value = "";
+    els.player.focus();
+  });
   els.size.addEventListener("input", () => { updateInfo(); save(); });
   els.size.addEventListener("blur", () => { els.size.value = getSize(); updateInfo(); });
   els.minus.addEventListener("click", () => stepSize(-1));
   els.plus.addEventListener("click", () => stepSize(1));
-  els.clear.addEventListener("click", () => { els.names.value = ""; updateInfo(); save(); els.names.focus(); });
+  els.clear.addEventListener("click", () => { players = []; renderPlayers(); els.player.focus(); });
   els.build.addEventListener("click", generate);
   els.reshuffle.addEventListener("click", generate);
   els.back.addEventListener("click", () => {
     els.result.hidden = true;
     els.setup.hidden = false;
-    els.names.focus();
+    els.player.focus();
   });
   els.copy.addEventListener("click", async () => {
     const text = lastTeams
@@ -266,5 +297,5 @@
   });
 
   load();
-  updateInfo();
+  renderPlayers();
 })();
